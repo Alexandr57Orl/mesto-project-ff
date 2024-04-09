@@ -1,12 +1,14 @@
 const cardTemplate = document.querySelector("#card-template").content;
+const placeList = document.querySelector(".places__list");
 
-function addCard(info, delCallBack) {
+function createCard(info, delCallBack) {
   const cardElement = cardTemplate
     .querySelector(".places__item")
     .cloneNode(true);
 
-  cardElement.querySelector(".card__image").src = info.link; // добавляем картинку в проект
-  cardElement.querySelector(".card__image").alt = info.name; // добавляем текст для скринридера
+  const cardElementContainer = cardElement.querySelector(".card__image");
+  cardElementContainer.src = info.link; // добавляем картинку в проект
+  cardElementContainer.alt = info.name; // добавляем текст для скринридера
   cardElement.querySelector(".card__title").textContent = info.name; // добавляем title под картинкой
 
   const resetButton = cardElement.querySelector(".card__delete-button");
@@ -18,16 +20,15 @@ function addCard(info, delCallBack) {
 }
 
 // фун=ция для удаления карточки
-function cleanerCard(listItem) {
+function deleteCard(listItem) {
   listItem.remove();
 }
 
 // функция для формирования новых карточек.
-function renderLiCards() {
-  const placeList = document.querySelector(".places__list");
+function renderInitialCards() {
   initialCards.forEach(function (item) {
-    cardElement = addCard(item, cleanerCard);
+    cardElement = createCard(item, deleteCard);
     placeList.append(cardElement);
   });
 }
-renderLiCards();
+renderInitialCards();
