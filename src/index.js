@@ -1,49 +1,40 @@
 import "./styles/index.css";
 import { initialCards } from "./scripts/cards.js";
-import { createCard, deleteCard, cardLikeActive } from "./scripts/card";
+import { createCard, deleteCard, toggleLike } from "./scripts/card";
 import { openModal, closePopup } from "./scripts/modal.js";
 
-const cardTemplate = document.querySelector("#card-template").content;
 const placeList = document.querySelector(".places__list");
 const page = document.querySelector(".page");
 const content = page.querySelector(".content");
 
+// общий класс Popup для закрытия на крестик и оверлей, а также для эфеекте плавности
+const popups = document.querySelectorAll(".popup");
+
 // открытие модального окна редактирования профиля
-const EditPopupProfile = page.querySelector(".popup_type_edit");
-const BtnPopupProfile = page.querySelector(".profile__edit-button");
+const editPopupProfile = page.querySelector(".popup_type_edit");
+const btnPopupProfile = page.querySelector(".profile__edit-button");
 
 // открытие модального окна добавления карточки
-const OpenPopupCard = page.querySelector(".popup_type_new-card");
-const BtnPopupNewCard = page.querySelector(".profile__add-button");
+const openPopupCard = page.querySelector(".popup_type_new-card");
+const btnPopupNewCard = page.querySelector(".profile__add-button");
 
 //открытие фото при клике на картинку
 const cardImagePopup = page.querySelector(".popup_type_image");
 const cardImagePopupSubtext = page.querySelector(".popup__caption");
 const popupImage = page.querySelector(".popup__image");
 
-// плавное закрытие и открытие Popup
-const smoothEffect = document.querySelectorAll(".popup");
-
-//  закрытия Popap на клик по крестику
-const BtnclosePopapProfile = page.querySelector(
-  ".popup_type_edit .popup__close"
-);
-const BtnclosePopapAddCard = page.querySelector(
-  ".popup_type_new-card .popup__close"
-);
-const BtnCloseImagePopup = page.querySelector(
-  ".popup_type_image .popup__close"
-);
-
 // изменение информации в профиле с помощи формы
-const createProfileForms = document.forms["edit-profile"];
-const profileName = createProfileForms.elements.name;
-const profileJob = createProfileForms.elements.description;
+const profileForm = document.forms["edit-profile"];
+const profileName = profileForm.elements.name;
+const profileJob = profileForm.elements.description;
+
+const createName = content.querySelector(".profile__title");
+const createJob = content.querySelector(".profile__description");
 
 // добавление новой карточки
-const generateCardForms = document.forms["new-place"];
-const placeName = generateCardForms.elements["place-name"];
-const placeLink = generateCardForms.elements.link;
+const cardForm = document.forms["new-place"];
+const placeName = cardForm.elements["place-name"];
+const placeLink = cardForm.elements.link;
 
 // ф-ция добавления карточки в проект
 
@@ -52,7 +43,7 @@ function renderInitialCards() {
     const cardElement = createCard(
       item,
       deleteCard,
-      cardLikeActive,
+      toggleLike,
       openImagePreview
     );
     placeList.append(cardElement);
@@ -62,15 +53,15 @@ renderInitialCards();
 
 // открытие модального окна  профиля
 
-BtnPopupProfile.addEventListener("click", () => {
-  openModal(EditPopupProfile);
+btnPopupProfile.addEventListener("click", () => {
+  openModal(editPopupProfile);
   getInfoProfile();
 });
 
 // открытие модального окна добавления карточки
 
-BtnPopupNewCard.addEventListener("click", () => {
-  openModal(OpenPopupCard);
+btnPopupNewCard.addEventListener("click", () => {
+  openModal(openPopupCard);
 });
 
 //открытие фото при клике на картинку
@@ -85,76 +76,56 @@ function openImagePreview(evt) {
   openModal(cardImagePopup);
 }
 
-// закрытие Popup на крестик
-BtnclosePopapProfile.addEventListener("click", () => {
-  closePopup(EditPopupProfile);
-});
-
-BtnclosePopapAddCard.addEventListener("click", () => {
-  closePopup(OpenPopupCard);
-});
-
-BtnCloseImagePopup.addEventListener("click", () => {
-  closePopup(cardImagePopup);
-});
-
-// закрытие Popup при клике в на свободное простанство
-
-EditPopupProfile.addEventListener("click", (evt) => {
-  if (evt.target === evt.currentTarget) closePopup(EditPopupProfile);
-});
-
-OpenPopupCard.addEventListener("click", (evt) => {
-  if (evt.target === evt.currentTarget) closePopup(OpenPopupCard);
-});
-
-cardImagePopup.addEventListener("click", (evt) => {
-  if (evt.target === evt.currentTarget) closePopup(cardImagePopup);
+// закрытие Popup на крестик и на свободное простанство
+popups.forEach((popup) => {
+  popup.addEventListener("mousedown", (evt) => {
+    if (evt.target.classList.contains("popup_is-opened")) {
+      closePopup(popup);
+    } else if (evt.target.classList.contains("popup__close")) {
+      closePopup(popup);
+    }
+  });
 });
 
 // плавный эффект при открытии закрытии popup
 
-smoothEffect.forEach(function (effect) {
-  effect.classList.toggle("popup_is-animated");
+popups.forEach(function (modalWin) {
+  modalWin.classList.toggle("popup_is-animated");
 });
 
 // получение информации профиля
 
 function getInfoProfile() {
-  profileName.value = content.querySelector(".profile__title").textContent;
-  profileJob.value = content.querySelector(".profile__description").textContent;
+  profileName.value = createName.textContent;
+  profileJob.value = createJob.textContent;
 }
 
 //Изменение страницы через попап
-function handleFormSubmit(evt) {
+function handleProfileFormSubmit(evt) {
   evt.preventDefault();
-  content.querySelector(".profile__title").textContent = profileName.value;
-  content.querySelector(".profile__description").textContent = profileJob.value;
-  closePopup(EditPopupProfile);
+  createName.textContent = profileName.value;
+  createJob.textContent = profileJob.value;
+  closePopup(editPopupProfile);
 }
 
-createProfileForms.addEventListener("submit", handleFormSubmit);
+profileForm.addEventListener("submit", handleProfileFormSubmit);
 
 // создание новой карточки
 
-function generateNewCards(evt) {
+function generateNewCard(evt) {
   evt.preventDefault();
   const cardName = placeName.value;
   const cardLink = placeLink.value;
 
-  const unification = { name: cardName, link: cardLink };
+  const newCardData = { name: cardName, link: cardLink };
 
-  initialCards.push(unification);
-
-  makeNewCard(
-    createCard(initialCards[0], deleteCard, cardLikeActive, openImagePreview)
-  );
-  generateCardForms.reset();
-  closePopup(OpenPopupCard);
+  addNewCard(createCard(newCardData, deleteCard, toggleLike, openImagePreview));
+  cardForm.reset();
+  closePopup(openPopupCard);
 }
 
-function makeNewCard(newCard) {
+function addNewCard(newCard) {
   placeList.prepend(newCard);
 }
 
-generateCardForms.addEventListener("submit", generateNewCards);
+cardForm.addEventListener("submit", generateNewCard);
