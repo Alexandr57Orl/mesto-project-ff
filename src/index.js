@@ -36,17 +36,26 @@ const cardForm = document.forms["new-place"];
 const placeName = cardForm.elements["place-name"];
 const placeLink = cardForm.elements.link;
 
+// функция принимает в вызов карточку и метод вставки
+
+function renderCard(item, method = "prepend") {
+  const callbacks = {
+    deleteCard,
+    toggleLike,
+    openImagePreview,
+  };
+  // создаем карточку, передавая обработчики в виде объекта `callbacks`
+  const cardElement = createCard(item, callbacks);
+
+  // вставляем карточку, используя метод (вставится `prepend` или `append`)
+  placeList[method](cardElement);
+}
+
 // ф-ция добавления карточки в проект
 
 function renderInitialCards() {
   initialCards.forEach(function (item) {
-    const cardElement = createCard(
-      item,
-      deleteCard,
-      toggleLike,
-      openImagePreview
-    );
-    placeList.append(cardElement);
+    renderCard(item, "append");
   });
 }
 renderInitialCards();

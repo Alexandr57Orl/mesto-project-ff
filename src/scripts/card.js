@@ -1,6 +1,6 @@
 const cardTemplate = document.querySelector("#card-template").content;
 
-export function createCard(info, deleteCallBack, toggleLike, openImagePreview) {
+export function createCard(info, { deleteCard, toggleLike, openImagePreview }) {
   const cardElement = cardTemplate
     .querySelector(".places__item")
     .cloneNode(true);
@@ -18,7 +18,7 @@ export function createCard(info, deleteCallBack, toggleLike, openImagePreview) {
   const resetButton = cardElement.querySelector(".card__delete-button");
   resetButton.addEventListener("click", () => {
     const listItem = resetButton.closest(".card"); // создаем переменную которая будет принимать callback на удаление карточки
-    deleteCallBack(listItem);
+    deleteCard(listItem);
   });
   return cardElement;
 }
@@ -33,5 +33,3 @@ export function deleteCard(listItem) {
 export function toggleLike(evt) {
   evt.target.classList.toggle("card__like-button_is-active");
 }
-
-// Если есть возможность и работа не имеет критических ошибок, поясните в "можно лучше" пожалуйста, как все ф-ции объединить в объект и передать его в качестве параметра
