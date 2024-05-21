@@ -2,6 +2,7 @@ import "./styles/index.css";
 import { initialCards } from "./scripts/cards.js";
 import { createCard, deleteCard, toggleLike } from "./scripts/card";
 import { openModal, closePopup } from "./scripts/modal.js";
+import { clearValidation, enableValidation } from "./scripts/valid.js";
 
 const placeList = document.querySelector(".places__list");
 const page = document.querySelector(".page");
@@ -36,14 +37,28 @@ const cardForm = document.forms["new-place"];
 const placeName = cardForm.elements["place-name"];
 const placeLink = cardForm.elements.link;
 
+const callbacks = {
+  deleteCard: deleteCard,
+  openImagePreview: openImagePreview,
+  toggleLike: toggleLike,
+};
+
+// объект валидации
+
+const validationObject = {
+  formSelector: ".popup__form",
+  inputSelector: ".popup__input",
+  submitButtonSelector: ".popup__button",
+  inactiveButtonClass: "popup__button_disabled",
+  inputErrorClass: "popup__input_type_error",
+  errorClass: "popup__error_visible",
+};
+
+enableValidation(validationObject);
+
 // функция принимает в вызов карточку и метод вставки
 
 function renderCard(item, method = "prepend") {
-  const callbacks = {
-    deleteCard,
-    toggleLike,
-    openImagePreview,
-  };
   // создаем карточку, передавая обработчики в виде объекта `callbacks`
   const cardElement = createCard(item, callbacks);
 
@@ -64,6 +79,7 @@ renderInitialCards();
 
 btnPopupProfile.addEventListener("click", () => {
   openModal(editPopupProfile);
+  clearValidation(editPopupProfile, validationObject);
   getInfoProfile();
 });
 
@@ -71,6 +87,7 @@ btnPopupProfile.addEventListener("click", () => {
 
 btnPopupNewCard.addEventListener("click", () => {
   openModal(openPopupCard);
+  clearValidation(openPopupCard, validationObject);
 });
 
 //открытие фото при клике на картинку
@@ -78,10 +95,9 @@ btnPopupNewCard.addEventListener("click", () => {
 function openImagePreview(evt) {
   popupImage.src = evt.target.src;
 
-  const popupText = evt.target.alt;
-  popupImage.alt = popupText;
-  cardImagePopupSubtext.textContent = popupText;
-
+  const popupTitle = evt.target.alt;
+  popupImage.alt = popupTitle;
+  cardImagePopupSubtext.textContent = popupTitle;
   openModal(cardImagePopup);
 }
 
@@ -128,7 +144,7 @@ function generateNewCard(evt) {
 
   const newCardData = { name: cardName, link: cardLink };
 
-  addNewCard(createCard(newCardData, deleteCard, toggleLike, openImagePreview));
+  addNewCard(createCard(newCardData, callbacks));
   cardForm.reset();
   closePopup(openPopupCard);
 }
