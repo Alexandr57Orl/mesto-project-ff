@@ -117,16 +117,36 @@
         </div>
       </div>
     </div>
-
     <template id="card-template">
       <li class="places__item card">
         <img class="card__image" src="" alt="" />
         <button type="button" class="card__delete-button"></button>
         <div class="card__description">
           <h2 class="card__title"></h2>
-          <button type="button" class="card__like-button"></button>
+          <button type="button" class="card__like-button">
+            <span class="like__count"></span>
+          </button>
         </div>
       </li>
     </template>
+
+    <div class="popup popup_type_new-avatar">
+      <div class="popup__content">
+        <button type="button" class="popup__close"></button>
+        <h3 class="popup__title">Обновить аватар</h3>
+        <form class="popup__form" name="new-avatar" novalidate>
+          <input
+            id="avatar-input"
+            type="url"
+            name="avatar-link"
+            class="popup__input popup__input_type_avatar"
+            placeholder="Введите ссылку на новый аватар"
+            required
+          />
+          <span class="avatar-input-error"></span>
+          <button type="submit" class="button popup__button">Сохранить</button>
+        </form>
+      </div>
+    </div>
   </body>
 </html>
