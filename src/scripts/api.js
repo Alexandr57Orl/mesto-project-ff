@@ -6,17 +6,19 @@ const config = {
   },
 };
 
+export {getUserData, getInitialCards, editProfile, changeAvatar, addThisCard, deleteThisCard, clickLike, deleteLike};
+
 // проверка ответа от сервера
-const checkedAnswerServer = (res) => {
-  if (res.ok) {
-    return res.json();
+const checkedAnswerServer = (response) => {
+  if (response.ok) {
+    return response.json();
   }
-  return Promise.reject(`Ошибка: ${res.status}`);
+  return Promise.reject(`Ошибка: ${response.status}`);
 };
 
 // получение данных о пользователе
 
-export const getUserData = () => {
+ const getUserData = () => {
   return fetch(`${config.baseUrl}/users/me`, {
     headers: config.headers,
   }).then(checkedAnswerServer);
@@ -24,7 +26,7 @@ export const getUserData = () => {
 
 // получение карточек
 
-export const getInitialCards = () => {
+ const getInitialCards = () => {
   return fetch(`${config.baseUrl}/cards`, {
     headers: config.headers,
   }).then(checkedAnswerServer);
@@ -32,20 +34,20 @@ export const getInitialCards = () => {
 
 // редактирование профиля
 
-export const editProfile = (name, about) => {
+const editProfile = (name, about)=> {
   return fetch(`${config.baseUrl}/users/me`, {
     method: "PATCH",
-    headers: config.headers,
-    body: JSON.stringify({
-      name: name,
-      about: about,
+    headers:config.headers,
+    body: json.stringify({
+      name:name,
+      about:about
     }),
   }).then(checkedAnswerServer);
-};
+}
 
 // изменение аватара
 
-export const changeAvatar = (itemAvatar) => {
+ const changeAvatar = (itemAvatar) => {
   return fetch(`${config.baseUrl}/users/me/avatar`, {
     method: "PATCH",
     headers: config.headers,
@@ -57,7 +59,7 @@ export const changeAvatar = (itemAvatar) => {
 
 // добавление карточки
 
-export const addThisCard = (name, link) => {
+ const addThisCard = (name, link) => {
   return fetch(`${config.baseUrl}/cards`, {
     method: "POST",
     headers: config.headers,
@@ -68,9 +70,26 @@ export const addThisCard = (name, link) => {
   }).then(checkedAnswerServer);
 };
 
+
+// добавление лайка
+ const clickLike = (id) => {
+  return fetch(`${config.baseUrl}/cards/likes/${id}`, {
+    method: "PUT",
+    headers: config.headers,
+  }).then(checkedAnswerServer);
+};
+
+// удаление лайка
+ const deleteLike = (id) => {
+  return fetch(`${config.baseUrl}/cards/likes/${id}`, {
+    method: "DELETE",
+    headers: config.headers,
+  }).then(checkedAnswerServer);
+};
+
 // удаление карточки
 
-export const deleteThisCard = (name, link) => {
+ const deleteThisCard = (name, link) => {
   return (
     fetch(`${config.baseUrl}/cards`),
     {
@@ -82,19 +101,4 @@ export const deleteThisCard = (name, link) => {
       }),
     }.then(checkedAnswerServer)
   );
-};
-
-// добавление лайка
-export const clickLike = (id) => {
-  return fetch(`${config.baseUrl}/cards/likes/${id}`, {
-    method: "PUT",
-    headers: config.headers,
-  }).then(checkedAnswerServer);
-};
-
-export const deleteLike = (id) => {
-  return fetch(`${config.baseUrl}/cards/likes/${id}`, {
-    method: "DELETE",
-    headers: config.headers,
-  }).then(checkedAnswerServer);
 };

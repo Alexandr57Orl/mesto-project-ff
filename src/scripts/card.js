@@ -1,4 +1,6 @@
-function createCard(info, { deleteCard, toggleLike, openImagePreview }) {
+import { clickLike, deleteLike,deleteThisCard } from "./api";
+
+function createCard(item, { deleteCard, toggleLike, openImagePreview,userId }) {
   const cardTemplate = document.querySelector("#card-template").content;
   const cardElement = cardTemplate
     .querySelector(".places__item")
@@ -10,9 +12,9 @@ function createCard(info, { deleteCard, toggleLike, openImagePreview }) {
   const likeCardButton = cardElement.querySelector(".card__like-button");
   const deleteButton = cardElement.querySelector(".card__delete-button");
 
-  cardTitle.textContent = info.name;
-  cardImage.src = info.link;
-  cardImage.alt = info.name;
+  cardTitle.textContent = item.name;
+  cardImage.src = item.link;
+  cardImage.alt = item.name;
 
   // добавляем обработчики событий карточки
 

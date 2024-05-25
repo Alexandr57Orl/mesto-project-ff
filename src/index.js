@@ -96,7 +96,6 @@ renderInitialCards();
 btnPopupProfile.addEventListener("click", () => {
   openModal(editPopupProfile);
   clearValidation(editPopupProfile, validationObject);
-  getInfoProfile();
   handleProfileFormSubmit();
 });
 
@@ -105,8 +104,7 @@ btnPopupProfile.addEventListener("click", () => {
 btnPopupNewCard.addEventListener("click", () => {
   openModal(openPopupCard);
   clearValidation(openPopupCard, validationObject);
-  getInfoProfile();
-  handleCardFormSubmit();
+  
 });
 
 // Открытие модального окна для изменения аватара пользователя
@@ -142,12 +140,6 @@ popups.forEach(function (modalWin) {
   modalWin.classList.toggle("popup_is-animated");
 });
 
-// получение информации профиля
-
-function getInfoProfile() {
-  profileName.value = createName.textContent;
-  profileJob.value = createJob.textContent;
-}
 
 // создание новой карточки
 
@@ -156,11 +148,17 @@ function generateNewCard(evt) {
   const cardName = placeName.value;
   const cardLink = placeLink.value;
 
-  const newCardData = { name: cardName, link: cardLink };
-
-  addNewCard(createCard(newCardData, callbacks));
+  askSave(true, cardForm.querySelector(".popup__button"));
+  addThisCard(cardName, cardLink).then((data) => {
+    addNewCard(createCard(data, callbacks));
   cardForm.reset();
   closePopup(openPopupCard);
+  }).catch((err) => {
+    console.log(err);
+  }).finally(() => {
+    askSave(false, cardForm.querySelector(".popup__button"));
+  });
+
 }
 
 function addNewCard(newCard) {
@@ -169,7 +167,7 @@ function addNewCard(newCard) {
 
 cardForm.addEventListener("submit", generateNewCard);
 
-// функция запрашивающая на сохранение информации профиля
+// функция декорактивная на сохранение информации профиля
 
 function askSave(loader, button) {
   if (loader) {
@@ -180,6 +178,8 @@ function askSave(loader, button) {
 }
 
 // промис для заполнения инфо профиля и карточки
+
+
 let userId;
 
 Promise.all([getUserData(), getInitialCards()])
@@ -187,11 +187,11 @@ Promise.all([getUserData(), getInitialCards()])
     const userProfile = data[0];
     const cardDate = data[1];
 
-    userId = user._id;
+    userId = userData._id;
 
-    profileName.textContent = userProfile.name;
-    profileJob.textContent = userProfile.about;
-    profileImage.style = `background-image: url(${userProfile.avatar})`;
+    profileName.textContent = userProfile.name; //получаем имя пользователя
+    profileJob.textContent = userProfile.about; //получаем хобби пользователя
+    profileImage.style = `background-image: url(${userProfile.avatar})`; //получаем аватар пользователя
 
     return [userId, cardDate];
   })
@@ -204,7 +204,7 @@ Promise.all([getUserData(), getInitialCards()])
     console.log(err);
   });
 
-//Данные профиля
+//Данные профиля для заполнение полей формы именем и значениями со страницы
 function handleProfileFormSubmit() {
   createName.textContent = profileName.value;
   createJob.textContent = profileJob.value;
@@ -213,13 +213,13 @@ function handleProfileFormSubmit() {
 const handleProfileEditePromise = (evt) => {
   evt.preventDefault();
   const name = profileName.value;
-  const about = profileJob.value;
+  const job = profileJob.value;
 
   askSave(true, profileForm.querySelector(".popup__button"));
-  editProfile(name, about)
+  editProfile(name, job)
     .then((data) => {
       createName.textContent = data.name;
-      createJob.textContent = data.about;
+      createJob.textContent = data.job;
       closePopup(editPopupProfile);
       editPopupProfile.reset();
     })
@@ -239,7 +239,7 @@ const handleAvatarEditePromise = (evt) => {
   evt.preventDefault();
   const avatarUrl = editAvatar.value;
 
-  askSave(true, profileForm.querySelector(".popup__button"));
+  askSave(true, userPopapForm.querySelector(".popup__button"));
   changeAvatar(avatarUrl)
     .then((data) => {
       usenNewPopapAvatar.style = `background-image: url(${data.avatar})`;
@@ -250,7 +250,7 @@ const handleAvatarEditePromise = (evt) => {
       console.log(err);
     })
     .finally(() => {
-      askSave(false, profileForm.querySelector(".popup__button"));
+      askSave(false, userPopapForm.querySelector(".popup__button"));
     });
 };
 userPopapForm.addEventListener("submit", handleAvatarEditePromise);
