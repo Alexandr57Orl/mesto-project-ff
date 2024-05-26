@@ -72,16 +72,16 @@ const editProfile = (name, about)=> {
 
 
 // добавление лайка
- const clickLike = (id) => {
-  return fetch(`${config.baseUrl}/cards/likes/${id}`, {
+ const clickLike = (cardId) => {
+  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
     method: "PUT",
     headers: config.headers,
   }).then(checkedAnswerServer);
 };
 
 // удаление лайка
- const deleteLike = (id) => {
-  return fetch(`${config.baseUrl}/cards/likes/${id}`, {
+ const deleteLike = (cardId) => {
+  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
     method: "DELETE",
     headers: config.headers,
   }).then(checkedAnswerServer);
@@ -89,16 +89,10 @@ const editProfile = (name, about)=> {
 
 // удаление карточки
 
- const deleteThisCard = (name, link) => {
-  return (
-    fetch(`${config.baseUrl}/cards`),
+ const deleteThisCard = (cardId) => {
+  return fetch(`${config.baseUrl}/cards/${cardId}`,
     {
       method: "DELETE",
       headers: config.headers,
-      body: JSON.stringify({
-        name: name,
-        link: link,
-      }),
-    }.then(checkedAnswerServer)
-  );
+    }).then(checkedAnswerServer)
 };

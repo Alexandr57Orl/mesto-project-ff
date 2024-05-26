@@ -7,11 +7,8 @@ import {
   getUserData,
   editProfile,
   addThisCard,
-  deleteThisCard,
   getInitialCards,
   changeAvatar,
-  clickLike,
-  deleteLike,
 } from "./scripts/api.js";
 
 const placeList = document.querySelector(".places__list");
@@ -74,9 +71,9 @@ enableValidation(validationObject);
 
 // функция принимает в вызов карточку и метод вставки
 
-function renderCard(item, method = "prepend") {
+function renderCard(card, method = "prepend") {
   // создаем карточку, передавая обработчики в виде объекта `callbacks`
-  const cardElement = createCard(item, callbacks);
+  const cardElement = createCard(card, callbacks);
 
   // вставляем карточку, используя метод (вставится `prepend` или `append`)
   placeList[method](cardElement);
@@ -85,8 +82,8 @@ function renderCard(item, method = "prepend") {
 // ф-ция добавления карточки в проект
 
 function renderInitialCards() {
-  initialCards.forEach(function (item) {
-    renderCard(item, "append");
+  initialCards.forEach(function (card) {
+    renderCard(card, "append");
   });
 }
 renderInitialCards();
@@ -187,7 +184,7 @@ Promise.all([getUserData(), getInitialCards()])
     const userProfile = data[0];
     const cardDate = data[1];
 
-    userId = userData._id;
+    userId = userProfile._id;
 
     profileName.textContent = userProfile.name; //получаем имя пользователя
     profileJob.textContent = userProfile.about; //получаем хобби пользователя
@@ -196,8 +193,8 @@ Promise.all([getUserData(), getInitialCards()])
     return [userId, cardDate];
   })
   .then(([userId, cardDate]) => {
-    cardDate.forEach(function (item) {
-      placeList.append(createCard(item, callbacks, userId));
+    cardDate.forEach(function (card) {
+      placeList.append(createCard(card, callbacks, userId));
     });
   })
   .catch((err) => {
