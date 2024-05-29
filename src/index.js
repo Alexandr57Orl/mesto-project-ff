@@ -1,7 +1,7 @@
 import "./pages/index.css";
 import { createCard, deleteCard, toggleLike } from "./scripts/card.js";
 import { closePopup, openModal } from "./scripts/modal.js";
-import { clearValidation, enableValidation } from "./scripts/valid.js";
+import { clearValidation, enableValidation } from "./scripts/validation.js";
 import {
   getUserData,
   getInitialCards,
@@ -57,7 +57,7 @@ const placeLink = cardForm.elements.link;
 //   deleteCard: deleteCard,
 //   toggleLike: toggleLike,
 //   openImagePreview: openImagePreview,
-// };
+// }; я не понял как можно реализовать передачу парметров-функций через объект...
 
 // объект валидации
 
@@ -107,26 +107,26 @@ popups.forEach((popup) => {
 popups.forEach(function (currentModal) {
   currentModal.classList.toggle("popup_is-animated");
 });
-
+let clientId;
 //Асинхронный общий промис для получения информации о пользователе и карточек
 Promise.all([getUserData(), getInitialCards()])
   .then((data) => {
-    const userData = data[0]; // данные о пользователе из промиса userInfo()
-    const cardDate = data[1]; //массив карточек из промиса requestCardsArray()
-    //далее работаем с этими переменными в текущем и следующем промисе
-    const userId = userData._id;
+    const userData = data[0]; // данныые пользователя полученные из промиса getUserData()
+    const cardDate = data[1]; //массив карточек полученный из промиса getInitialCards()
 
-    createTitleName.textContent = userData.name; //отрисовываем имя
-    createDescriptionJob.textContent = userData.about; //отрисовываем подзаголовок
-    profileImage.style = `background-image: url('${userData.avatar}')`; //отрисовываем аватар
+    const clientId = userData._id;
 
-    return [cardDate, userId];
+    createTitleName.textContent = userData.name; // получем имя
+    createDescriptionJob.textContent = userData.about; //получаем название
+    profileImage.style = `background-image: url('${userData.avatar}')`; //получаем аватар
+
+    return [cardDate, clientId]; //возвращаем массив карточек и id пользователя
   })
-  .then(([cardDate, userId]) => {
+  .then(([cardDate, clientId]) => {
     //работа с данными для отрисовки карточек
     cardDate.forEach(function (card) {
       placeList.append(
-        createCard(card, deleteCard, toggleLike, openImagePreview, userId)
+        createCard(card, deleteCard, toggleLike, openImagePreview, clientId)
       );
     });
   })
@@ -134,20 +134,20 @@ Promise.all([getUserData(), getInitialCards()])
     console.log(err);
   });
 
-//Заполнение полей формы именем/описанием значениями со страницы
+//получение данных профиля и отрисовка их на странице
 function handleProfileFormSubmit() {
   createTitleName.textContent = profilePopapName.value;
   createDescriptionJob.textContent = profilePopapJob.value;
 }
 
-//Изменение данных профиля через попап + вызов промиса
+//Изменение данных профиля через попап работая с промисом
 function editProfileData(evt) {
   evt.preventDefault();
 
   let name = profilePopapName.value;
   let job = profilePopapJob.value;
-
-  askSave(true, profileForm.querySelector(".popup__button"));
+  const profileFormBtn = profileForm.querySelector(".popup__button");
+  askSave(true, profileFormBtn);
   editProfile(name, job)
     .then((data) => {
       createTitleName.textContent = data.name;
@@ -158,7 +158,7 @@ function editProfileData(evt) {
     .catch((err) => {
       console.log(err);
     })
-    .finally(() => askSave(false, profileForm.querySelector(".popup__button")));
+    .finally(() => askSave(false, profileFormBtn));
 }
 
 profileForm.addEventListener("submit", editProfileData);
@@ -168,8 +168,9 @@ function editAvatarImage(evt) {
   evt.preventDefault();
 
   const avatarLink = editAvatar.value;
+  const popapFormBtn = userPopapForm.querySelector(".popup__button");
 
-  askSave(true, userPopapForm.querySelector(".popup__button"));
+  askSave(true, popapFormBtn);
   changeAvatar(avatarLink)
     .then((data) => {
       let avatarImage = data.avatar;
@@ -181,7 +182,7 @@ function editAvatarImage(evt) {
       console.log(err);
     })
     .finally(() => {
-      askSave(false, userPopapForm.querySelector(".popup__button"));
+      askSave(false, popapFormBtn);
     });
 }
 
@@ -192,12 +193,13 @@ function generateNewCard(evt) {
   evt.preventDefault();
   const cardName = placeName.value;
   const cardLink = placeLink.value;
+  const cardFormBtn = cardForm.querySelector(".popup__button");
 
-  askSave(true, cardForm.querySelector(".popup__button"));
+  askSave(true, cardFormBtn);
   addThisCard(cardName, cardLink)
     .then((data) => {
       addNewCard(
-        createCard(data, deleteCard, toggleLike, openImagePreview, userId)
+        createCard(data, deleteCard, toggleLike, openImagePreview, clientId)
       );
       cardForm.reset();
       closePopup(openPopupCard);
@@ -206,7 +208,7 @@ function generateNewCard(evt) {
       console.log(err);
     })
     .finally(() => {
-      askSave(false, cardForm.querySelector(".popup__button"));
+      askSave(false, cardFormBtn);
     });
 }
 

@@ -7,10 +7,7 @@ const config = {
 };
 
 //общая функция-обработчик ответа сервера
-export const checkedAnswerServer = (res) => {
-  if (res.ok) {
-    return res.json();
-  }
+const showErrop = (res) => {
   return Promise.reject(`Ошибка: ${res.status}`);
 };
 
@@ -18,14 +15,14 @@ export const checkedAnswerServer = (res) => {
 export const getUserData = () => {
   return fetch(`${config.baseUrl}/users/me`, {
     headers: config.headers,
-  }).then(checkedAnswerServer);
+  }).then(showErrop);
 };
 
 //запрос на получение карточек с сервера
 export const getInitialCards = () => {
   return fetch(`${config.baseUrl}/cards`, {
     headers: config.headers,
-  }).then(checkedAnswerServer);
+  }).then(showErrop);
 };
 
 //запрос на редактирование профиля
@@ -37,7 +34,7 @@ export const editProfile = (name, about) => {
       name: name,
       about: about,
     }),
-  }).then(checkedAnswerServer);
+  }).then(showErrop);
 };
 
 //Обновление аватара пользователя
@@ -48,7 +45,7 @@ export const changeAvatar = (itemAvatar) => {
     body: JSON.stringify({
       avatar: itemAvatar,
     }),
-  }).then(checkedAnswerServer);
+  }).then(showErrop);
 };
 
 //Добавление новой карточки
@@ -60,7 +57,7 @@ export const addThisCard = (name, link) => {
       name: name,
       link: link,
     }),
-  }).then(checkedAnswerServer);
+  }).then(showErrop);
 };
 
 //Постановка лайка
@@ -68,7 +65,7 @@ export const clickLike = (cardId) => {
   return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
     method: "PUT",
     headers: config.headers,
-  }).then(checkedAnswerServer);
+  }).then(showErrop);
 };
 
 //Cнятие лайка
@@ -76,7 +73,7 @@ export const deleteLike = (cardId) => {
   return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
     method: "DELETE",
     headers: config.headers,
-  }).then(checkedAnswerServer);
+  }).then(showErrop);
 };
 
 //Удаление карточки
@@ -84,5 +81,5 @@ export const deleteThisCard = (cardId) => {
   return fetch(`${config.baseUrl}/cards/${cardId}`, {
     method: "DELETE",
     headers: config.headers,
-  }).then(checkedAnswerServer);
+  }).then(showErrop);
 };
