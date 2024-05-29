@@ -9,7 +9,7 @@ import {
   addThisCard,
   changeAvatar,
 } from "./scripts/api.js";
-import { validationObject } from "./validationObject.js";
+import { validationObject } from "./scripts/validationObject.js";
 //DOM nodes
 const placeList = document.querySelector(".places__list");
 const page = document.querySelector(".page");
