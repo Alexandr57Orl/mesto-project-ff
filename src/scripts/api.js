@@ -7,7 +7,10 @@ const config = {
 };
 
 //общая функция-обработчик ответа сервера
-const showErrop = (res) => {
+export const checkedAnswerServer = (res) => {
+  if (res.ok) {
+    return res.json();
+  }
   return Promise.reject(`Ошибка: ${res.status}`);
 };
 
@@ -15,14 +18,14 @@ const showErrop = (res) => {
 export const getUserData = () => {
   return fetch(`${config.baseUrl}/users/me`, {
     headers: config.headers,
-  }).then(showErrop);
+  }).then(checkedAnswerServer);
 };
 
 //запрос на получение карточек с сервера
 export const getInitialCards = () => {
   return fetch(`${config.baseUrl}/cards`, {
     headers: config.headers,
-  }).then(showErrop);
+  }).then(checkedAnswerServer);
 };
 
 //запрос на редактирование профиля
@@ -34,7 +37,7 @@ export const editProfile = (name, about) => {
       name: name,
       about: about,
     }),
-  }).then(showErrop);
+  }).then(checkedAnswerServer);
 };
 
 //Обновление аватара пользователя
@@ -45,7 +48,7 @@ export const changeAvatar = (itemAvatar) => {
     body: JSON.stringify({
       avatar: itemAvatar,
     }),
-  }).then(showErrop);
+  }).then(checkedAnswerServer);
 };
 
 //Добавление новой карточки
@@ -57,7 +60,7 @@ export const addThisCard = (name, link) => {
       name: name,
       link: link,
     }),
-  }).then(showErrop);
+  }).then(checkedAnswerServer);
 };
 
 //Постановка лайка
@@ -65,7 +68,7 @@ export const clickLike = (cardId) => {
   return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
     method: "PUT",
     headers: config.headers,
-  }).then(showErrop);
+  }).then(checkedAnswerServer);
 };
 
 //Cнятие лайка
@@ -73,7 +76,7 @@ export const deleteLike = (cardId) => {
   return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
     method: "DELETE",
     headers: config.headers,
-  }).then(showErrop);
+  }).then(checkedAnswerServer);
 };
 
 //Удаление карточки
@@ -81,5 +84,5 @@ export const deleteThisCard = (cardId) => {
   return fetch(`${config.baseUrl}/cards/${cardId}`, {
     method: "DELETE",
     headers: config.headers,
-  }).then(showErrop);
+  }).then(checkedAnswerServer);
 };
