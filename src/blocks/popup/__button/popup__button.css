@@ -25,6 +25,11 @@
   border: 1px solid #ccc;
 }
 
+.popup__button_disabled:hover {
+  background: transparent;
+  cursor: default;
+}
+
 @media screen and (max-width: 568px) {
   .popup__button {
     font-size: 14px;

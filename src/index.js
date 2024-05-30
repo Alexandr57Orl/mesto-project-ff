@@ -53,11 +53,10 @@ const cardForm = document.forms["new-place"];
 const placeName = cardForm.elements["place-name"];
 const placeLink = cardForm.elements.link;
 
-// const callbacks = {
-//   deleteCard: deleteCard,
-//   toggleLike: toggleLike,
-//   openImagePreview: openImagePreview,
-// }; я не понял как можно реализовать передачу парметров-функций через объект...
+// кнопки в модалках
+const profileFormBtn = profileForm.querySelector(".popup__button");
+const popapFormBtn = userPopapForm.querySelector(".popup__button");
+const cardFormBtn = cardForm.querySelector(".popup__button");
 
 // объект валидации
 
@@ -65,8 +64,8 @@ enableValidation(validationObject);
 
 //Открытие модального окна  профиля
 btnPopupProfile.addEventListener("click", () => {
-  openModal(editPopupProfile);
   clearValidation(editPopupProfile, validationObject);
+  openModal(editPopupProfile);
   handleProfileFormSubmit();
 });
 
@@ -107,6 +106,8 @@ popups.forEach((popup) => {
 popups.forEach(function (currentModal) {
   currentModal.classList.toggle("popup_is-animated");
 });
+
+//Получение информации о пользователе и карточках
 let clientId;
 //Асинхронный общий промис для получения информации о пользователе и карточек
 Promise.all([getUserData(), getInitialCards()])
@@ -114,7 +115,7 @@ Promise.all([getUserData(), getInitialCards()])
     const userData = data[0]; // данныые пользователя полученные из промиса getUserData()
     const cardDate = data[1]; //массив карточек полученный из промиса getInitialCards()
 
-    const clientId = userData._id;
+    clientId = userData._id;
 
     createTitleName.textContent = userData.name; // получем имя
     createDescriptionJob.textContent = userData.about; //получаем название
@@ -136,8 +137,8 @@ Promise.all([getUserData(), getInitialCards()])
 
 //получение данных профиля и отрисовка их на странице
 function handleProfileFormSubmit() {
-  createTitleName.textContent = profilePopapName.value;
-  createDescriptionJob.textContent = profilePopapJob.value;
+  profilePopapName.value = createTitleName.textContent;
+  profilePopapJob.value = createDescriptionJob.textContent;
 }
 
 //Изменение данных профиля через попап работая с промисом
@@ -146,19 +147,21 @@ function editProfileData(evt) {
 
   let name = profilePopapName.value;
   let job = profilePopapJob.value;
-  const profileFormBtn = profileForm.querySelector(".popup__button");
   askSave(true, profileFormBtn);
   editProfile(name, job)
     .then((data) => {
       createTitleName.textContent = data.name;
-      createDescriptionJob.textContent = data.job;
+      createDescriptionJob.textContent = data.about;
       closePopup(editPopupProfile);
       profileForm.reset();
     })
     .catch((err) => {
       console.log(err);
     })
-    .finally(() => askSave(false, profileFormBtn));
+    .finally(() => {
+      askSave(false, profileFormBtn);
+      profileForm.reset();
+    });
 }
 
 profileForm.addEventListener("submit", editProfileData);
@@ -168,7 +171,6 @@ function editAvatarImage(evt) {
   evt.preventDefault();
 
   const avatarLink = editAvatar.value;
-  const popapFormBtn = userPopapForm.querySelector(".popup__button");
 
   askSave(true, popapFormBtn);
   changeAvatar(avatarLink)
@@ -193,7 +195,6 @@ function generateNewCard(evt) {
   evt.preventDefault();
   const cardName = placeName.value;
   const cardLink = placeLink.value;
-  const cardFormBtn = cardForm.querySelector(".popup__button");
 
   askSave(true, cardFormBtn);
   addThisCard(cardName, cardLink)

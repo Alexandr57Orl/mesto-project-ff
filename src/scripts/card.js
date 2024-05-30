@@ -57,6 +57,17 @@ export function createCard(
   return cardElement;
 }
 
+// Функция удаления карточки
+export function deleteCard(cardId, cardElement) {
+  deleteThisCard(cardId)
+    .then(() => {
+      cardElement.remove();
+    })
+    .catch((err) => {
+      console.error(`Произошла ошибка при удалении карточки:`, err);
+    });
+}
+
 //Функция лайка карточки
 export function toggleLike(evt, cardId, cardLikeCount) {
   const btnForLike = evt.target.classList.contains("card__like-button");
@@ -71,6 +82,7 @@ export function toggleLike(evt, cardId, cardLikeCount) {
       })
       .catch((err) => {
         console.error(`Произошла ошибка при лайке:`, err);
+        evt.target.classList.remove("card__like-button_is-active");
       });
   } else if (btnForLike && checkLike) {
     evt.target.classList.remove("card__like-button_is-active");
@@ -82,12 +94,6 @@ export function toggleLike(evt, cardId, cardLikeCount) {
         console.error(`Произошла ошибка при удаления лайка:`, err);
       });
   }
-}
-
-// Функция удаления карточки
-export function deleteCard(cardId, cardElement) {
-  deleteThisCard(cardId);
-  cardElement.remove();
 }
 
 //Логика отображения и дизейбла иконки удаления карточки
