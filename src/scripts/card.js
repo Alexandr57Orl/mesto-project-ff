@@ -92,6 +92,7 @@ export function toggleLike(evt, cardId, cardLikeCount) {
       })
       .catch((err) => {
         console.error(`Произошла ошибка при удаления лайка:`, err);
+        evt.target.classList.add("card__like-button_is-active");
       });
   }
 }

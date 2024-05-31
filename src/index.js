@@ -132,7 +132,7 @@ Promise.all([getUserData(), getInitialCards()])
     });
   })
   .catch((err) => {
-    console.log(err);
+    console.log("произошла ошибка при получении данных профиля", err);
   });
 
 //получение данных профиля и отрисовка их на странице
@@ -156,7 +156,7 @@ function editProfileData(evt) {
       profileForm.reset();
     })
     .catch((err) => {
-      console.log(err);
+      console.log("произошла ошибка при изменении информации профиля:", err);
     })
     .finally(() => {
       askSave(false, profileFormBtn);
@@ -181,7 +181,7 @@ function editAvatarImage(evt) {
       userPopapForm.reset();
     })
     .catch((err) => {
-      console.log(err);
+      console.log("Произошла ошибка при изменении аватара:", err);
     })
     .finally(() => {
       askSave(false, popapFormBtn);
@@ -206,7 +206,7 @@ function generateNewCard(evt) {
       closePopup(openPopupCard);
     })
     .catch((err) => {
-      console.log(err);
+      console.log("произошла ошибка при создании карточки:", err);
     })
     .finally(() => {
       askSave(false, cardFormBtn);
